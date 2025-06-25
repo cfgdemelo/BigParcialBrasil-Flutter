@@ -1,9 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'firebase_options.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -55,6 +61,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  final database = FirebaseDatabase.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _activateListeners();
+  }
+
+  void _activateListeners() {
+    final competitorsRef = database.ref('competitors');
+    final messagesRef = database.ref('messages');
+
+    competitorsRef.onValue.listen((event) {
+      final data = event.snapshot.value;
+      print('Competitors data: $data');
+    });
+
+    messagesRef.onValue.listen((event) {
+      final data = event.snapshot.value;
+      print('Messages data: $data');
+    });
+  }
 
   void _incrementCounter() {
     setState(() {

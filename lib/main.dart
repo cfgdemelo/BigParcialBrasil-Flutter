@@ -56,17 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
     competitorsRef.onValue.listen((event) {
       final data = event.snapshot.value;
-      print('Competitors data: $data');
-      if (data != null && data is Map) {
+      if (data != null && data is List<dynamic>) {
         setState(() {
-          _competitors = data.values.toList();
+ _competitors = data;
         });
       }
     });
 
     messagesRef.onValue.listen((event) async {
       final data = event.snapshot.value;
-      log('Messages data: ${data.toString()}');
       if (data != null && data is Map) {
         setState(() {
           _title = data['title'] ?? 'No title';
@@ -80,20 +78,75 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final competitorsRef = database.ref(competitorsRefName);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Firebase Realtime DB Data'),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(_title),
-          Text(_subtitle),
-          Text(_message),
-          Expanded(child: Container()), // Use Expanded to push the footer to the bottom
-          Text(_footer),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(_title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(_subtitle, style: TextStyle(fontSize: 16)),
+                Text(_message, style: TextStyle(fontSize: 14)),
+              ],
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder(
+              stream: competitorsRef.onValue,
+              builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
+                if (snapshot.hasData && !snapshot.hasError && snapshot.data!.snapshot.value != null && snapshot.data!.snapshot.value is List<dynamic>) {
+                  final competitors = snapshot.data!.snapshot.value as List<dynamic>;
+                  return ListView.builder(
+                    itemCount: competitors.length,
+                    itemBuilder: (context, index) {
+                      final competitor = competitors[index] as Map<dynamic, dynamic>;
+                      return CompetitorListItem(competitor: competitor);
+                    },
+                  );
+                }
+                return Center(child: CircularProgressIndicator());
+              },
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            alignment: Alignment.center,
+            child: Text(_footer, style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class CompetitorListItem extends StatelessWidget {
+  final Map<dynamic, dynamic> competitor;
+
+  const CompetitorListItem({Key? key, required this.competitor}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(competitor['photo'] ?? ''),
+        radius: 30,
+      ),
+      title: Text(competitor['name'] ?? 'Unknown Competitor'),
+      trailing: ElevatedButton(
+        onPressed: () {
+          // TODO: Implement voting logic here
+          print('Voted for ${competitor['name']}');
+        },
+        child: const Text('Votar'),
       ),
     );
   }

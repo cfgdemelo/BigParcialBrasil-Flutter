@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "773575950174",
+    "firebase_url": "https://teste-action-efe10.firebaseio.com",
+    "project_id": "teste-action-efe10",
+    "storage_bucket": "teste-action-efe10.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773575950174:android:ed2a78182c1812e7b059cf",
+        "android_client_info": {
+          "package_name": "com.example.bigparcialbrasil"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773575950174-cv519i486kcrfhgl1deukjs3q7rmeune.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvgDYEmFOL4yLC9Q7xRley9f5dpnnYkFM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773575950174-8qti82vg8sp24igg3d7phneb7639li0s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773575950174:android:ee78fa75b0bf2b10b059cf",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773575950174-cv519i486kcrfhgl1deukjs3q7rmeune.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvgDYEmFOL4yLC9Q7xRley9f5dpnnYkFM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773575950174-8qti82vg8sp24igg3d7phneb7639li0s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

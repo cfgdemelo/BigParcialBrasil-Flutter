@@ -104,12 +104,13 @@ class _MyHomePageState extends State<MyHomePage> {
               stream: competitorsRef.onValue,
               builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
                 if (snapshot.hasData && !snapshot.hasError && snapshot.data!.snapshot.value != null && snapshot.data!.snapshot.value is List<dynamic>) {
-                  final competitors = snapshot.data!.snapshot.value as List<dynamic>;
+                  final List<dynamic> allCompetitors = snapshot.data!.snapshot.value as List<dynamic>;
+                  final filteredCompetitors = allCompetitors.where((competitor) => competitor['walled'] == true).toList();
                   return ListView.builder(
-                    itemCount: competitors.length,
+                    itemCount: filteredCompetitors.length,
                     itemBuilder: (context, index) {
-                      final competitor = competitors[index] as Map<dynamic, dynamic>;
-                      return CompetitorListItem(competitor: competitor);
+                      final competitor = filteredCompetitors[index] as Map<dynamic, dynamic>;
+                      return CompetitorListItem(competitor: competitor, totalVotes: _calculateTotalVotes(filteredCompetitors));
                     },
                   );
                 }
@@ -128,10 +129,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+int _calculateTotalVotes(List<dynamic> competitors) {
+  int total = 0;
+  for (var competitor in competitors) {
+    total += (competitor['votes'] as int? ?? 0);
+  }
+  return total;
+}
+
 class CompetitorListItem extends StatelessWidget {
   final Map<dynamic, dynamic> competitor;
-
-  const CompetitorListItem({Key? key, required this.competitor}) : super(key: key);
+  final int totalVotes;
+  const CompetitorListItem({Key? key, required this.competitor, required this.totalVotes}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -140,13 +149,38 @@ class CompetitorListItem extends StatelessWidget {
         backgroundImage: NetworkImage(competitor['photo'] ?? ''),
         radius: 30,
       ),
-      title: Text(competitor['name'] ?? 'Unknown Competitor'),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(competitor['name'] ?? 'Unknown Competitor'),
+          SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: totalVotes > 0 ? (competitor['votes'] as int? ?? 0) / totalVotes : 0,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                ),
+              ),
+              SizedBox(width: 8),
+              Text(
+                '${totalVotes > 0 ? ((competitor['votes'] as int? ?? 0) / totalVotes * 100).toStringAsFixed(1) : 0}%',
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
+          ),
+        ],
+      ),
       trailing: ElevatedButton(
         onPressed: () {
-          // TODO: Implement voting logic here
-          print('Voted for ${competitor['name']}');
+          final database = FirebaseDatabase.instance;
+          final competitorIndex = competitor['index'];
+          if (competitorIndex != null) {
+            database.ref('$competitorsRefName/$competitorIndex/votes').set((competitor['votes'] as int? ?? 0) + 1);
+          }
         },
-        child: const Text('Votar'),
+        child: Text('${competitor['name'] ?? ''}'),
       ),
     );
   }

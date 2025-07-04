@@ -7,11 +7,10 @@ const String messagesRefName = 'messages';
 const String competitorsRefName = 'competitors';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -31,7 +30,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState(); 
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -40,27 +39,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _activateListeners();
+    _activateMessagesListener();
   }
 
   String _title = 'Loading...';
   String _subtitle = 'Loading...';
   String _message = 'Loading...';
   String _footer = 'Loading...';
-  List<dynamic> _competitors = [];
 
-  void _activateListeners() {
-    final competitorsRef = database.ref(competitorsRefName);
+  void _activateMessagesListener() {
     final messagesRef = database.ref(messagesRefName);
-
-    competitorsRef.onValue.listen((event) {
-      final data = event.snapshot.value;
-      if (data != null && data is List<dynamic>) {
-        setState(() {
- _competitors = data;
-        });
-      }
-    });
 
     messagesRef.onValue.listen((event) async {
       final data = event.snapshot.value;
@@ -92,7 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(_title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(
+                  _title,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 Text(_subtitle, style: TextStyle(fontSize: 16)),
                 Text(_message, style: TextStyle(fontSize: 14)),
               ],
@@ -102,14 +93,25 @@ class _MyHomePageState extends State<MyHomePage> {
             child: StreamBuilder(
               stream: competitorsRef.onValue,
               builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
-                if (snapshot.hasData && !snapshot.hasError && snapshot.data!.snapshot.value != null && snapshot.data!.snapshot.value is List<dynamic>) {
-                  final List<dynamic> allCompetitors = snapshot.data!.snapshot.value as List<dynamic>;
-                  final filteredCompetitors = allCompetitors.where((competitor) => competitor['walled'] == true).toList();
+                if (snapshot.hasData &&
+                    !snapshot.hasError &&
+                    snapshot.data!.snapshot.value != null &&
+                    snapshot.data!.snapshot.value is List<dynamic>) {
+                  final List<dynamic> allCompetitors =
+                      snapshot.data!.snapshot.value as List<dynamic>;
+                  final filteredCompetitors =
+                      allCompetitors
+                          .where((competitor) => competitor['walled'] == true)
+                          .toList();
                   return ListView.builder(
                     itemCount: filteredCompetitors.length,
                     itemBuilder: (context, index) {
-                      final competitor = filteredCompetitors[index] as Map<dynamic, dynamic>;
-                      return CompetitorListItem(competitor: competitor, totalVotes: _calculateTotalVotes(filteredCompetitors));
+                      final competitor =
+                          filteredCompetitors[index] as Map<dynamic, dynamic>;
+                      return CompetitorListItem(
+                        competitor: competitor,
+                        totalVotes: _calculateTotalVotes(filteredCompetitors),
+                      );
                     },
                   );
                 }
@@ -120,7 +122,10 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             padding: const EdgeInsets.all(8.0),
             alignment: Alignment.center,
-            child: Text(_footer, style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+            child: Text(
+              _footer,
+              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+            ),
           ),
         ],
       ),
@@ -139,7 +144,11 @@ int _calculateTotalVotes(List<dynamic> competitors) {
 class CompetitorListItem extends StatelessWidget {
   final Map<dynamic, dynamic> competitor;
   final int totalVotes;
-  const CompetitorListItem({super.key, required this.competitor, required this.totalVotes});
+  const CompetitorListItem({
+    super.key,
+    required this.competitor,
+    required this.totalVotes,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +166,10 @@ class CompetitorListItem extends StatelessWidget {
             children: [
               Expanded(
                 child: LinearProgressIndicator(
-                  value: totalVotes > 0 ? (competitor['votes'] as int? ?? 0) / totalVotes : 0,
+                  value:
+                      totalVotes > 0
+                          ? (competitor['votes'] as int? ?? 0) / totalVotes
+                          : 0,
                   backgroundColor: Colors.grey[300],
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                 ),
@@ -176,7 +188,9 @@ class CompetitorListItem extends StatelessWidget {
           final database = FirebaseDatabase.instance;
           final competitorIndex = competitor['index'];
           if (competitorIndex != null) {
-            database.ref('$competitorsRefName/$competitorIndex/votes').set((competitor['votes'] as int? ?? 0) + 1);
+            database
+                .ref('$competitorsRefName/$competitorIndex/votes')
+                .set((competitor['votes'] as int? ?? 0) + 1);
           }
         },
         child: Text('${competitor['name'] ?? ''}'),

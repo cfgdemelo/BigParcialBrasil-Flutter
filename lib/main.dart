@@ -86,6 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Text(_subtitle, style: TextStyle(fontSize: 16)),
                 Text(_message, style: TextStyle(fontSize: 14)),
+                SizedBox(height: 20), // Add margin to the bottom
               ],
             ),
           ),

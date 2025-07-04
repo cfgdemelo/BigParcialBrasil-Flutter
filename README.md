@@ -1,16 +1,14 @@
-# myapp
+Application created to show votes intention about "Big Brother Brasil" reality show, where users could access and demonstrate in which reality show competitor would they vote.
 
-A new Flutter project.
+Everything presented on the screen comes from a Firebase Realtime Database, including texts, photos, votes options and so on.
 
-## Getting Started
+This sample application was created to test some technologies such as:
 
-This project is a starting point for a Flutter application.
+- Flutter
+- Firebase Realtime Database
+- Loading images from url with Flutter
+- Creating and removing Flutter elements on the fly
+- Creating a simple row chart using only Flutter based on number of "votes" returning from Firebase
+- Play Store publication (wip)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Play Store link (this link is from this repo: https://github.com/cfgdemelo/BigParcialBrasil): [https://play.google.com/store/apps/details?id=com.cfgdemelo.bigparcialbrasil](https://play.google.com/store/apps/details?id=com.cfgdemelo.bigparcialbrasil)

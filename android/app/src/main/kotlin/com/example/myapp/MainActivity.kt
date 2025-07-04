@@ -1,4 +1,4 @@
-package com.example.myapp
+package com.cfgdemelo.bpbflutter
 
 import io.flutter.embedding.android.FlutterActivity
 

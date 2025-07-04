@@ -139,7 +139,7 @@ int _calculateTotalVotes(List<dynamic> competitors) {
 class CompetitorListItem extends StatelessWidget {
   final Map<dynamic, dynamic> competitor;
   final int totalVotes;
-  const CompetitorListItem({Key? key, required this.competitor, required this.totalVotes}) : super(key: key);
+  const CompetitorListItem({super.key, required this.competitor, required this.totalVotes});
 
   @override
   Widget build(BuildContext context) {
